@@ -3,4 +3,5 @@ language: python
 python:
   - 3.6
 script:
-  - invoke test
+  - invoke shunit
+  - invoke unittest

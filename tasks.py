@@ -9,8 +9,15 @@ def readme(context):
         sys.exit(1)
 
 @task
-def test(context):
+def shunit(context):
     try:
-        run("_ENV=test ./sample_test.sh && python -m unittest sample.py")
+        run("_ENV=test ./sample_test.sh")
+    except Exception:
+        sys.exit(1)
+
+@task
+def unittest(context):
+    try:
+        run("python -m unittest sample.py")
     except Exception:
         sys.exit(1)
