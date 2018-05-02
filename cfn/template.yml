@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Automate provisioning of CodeBuild with IAM and ECR. 
+Parameters:
+  CodeBuildProjectNeme:
+    Type: String
+    Default: "shunit2-with-moto-sample"
+  GithubRepository:
+    Type: String
+    Default: "https://github.com/inokappa/shunit2-with-moto-sample.git"
+Resources:
+  ECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref CodeBuildProjectNeme
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    DependsOn: CodeBuildRole
+    Properties:
+      Artifacts:
+        Type: no_artifacts
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image:
+          Fn::Join:
+            - ""
+            - - Ref: AWS::AccountId
+              - ".dkr.ecr."
+              - Ref: AWS::Region
+              - ".amazonaws.com/"
+              - Ref: CodeBuildProjectNeme
+              - ":latest"
+        Type: LINUX_CONTAINER
+      Name: !Ref CodeBuildProjectNeme
+      ServiceRole: !Ref CodeBuildRole
+      Triggers:
+        Webhook: true
+      Source:
+        Type: GITHUB
+        Location: !Ref GithubRepository
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+Outputs:
+  CodeBuildURL:
+    Description: CodeBuild URL
+    Value: 
+      Fn::Join:
+        - ""
+        - - "https://console.aws.amazon.com/codebuild/home?region="
+          - Ref: AWS::Region
+          - "#/projects/"
+          - Ref: CodeBuildProject
+          - "/view"
+  ECRRepositoryURL:
+    Description: ECR Repository URL
+    Value: 
+      Fn::Join:
+        - ""
+        - - "https://"
+          - Ref: AWS::AccountId
+          - ".dkr.ecr."
+          - Ref: AWS::Region
+          - ".amazonaws.com/"
+          - Ref: CodeBuildProjectNeme 
