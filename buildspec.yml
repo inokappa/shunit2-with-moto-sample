@@ -2,6 +2,7 @@ version: 0.2
 
 env:
   variables:
+    TZ: "Asia/Tokyo"
     TERM: "xterm"
     _ENV: "test"
 
