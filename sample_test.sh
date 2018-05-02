@@ -30,7 +30,8 @@ testGetObjects() {
   # get_objects のテスト
   #######################################
 
-  assertEquals "$(get_objects 'sample-bucket' 'data1')" "foo bar baz"
+  # assertEquals "$(get_objects 'sample-bucket' 'data1')" "foo bar baz"
+  assertEquals "$(get_objects 'sample-bucket' 'data1')" "foo bar"
 }
 
 . ./shunit2
