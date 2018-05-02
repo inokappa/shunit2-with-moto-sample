@@ -18,6 +18,6 @@ def shunit(context):
 @task
 def unittest(context):
     try:
-        run("python -m unittest sample.py")
+        run("python -m unittest sample.py -v")
     except Exception:
         sys.exit(1)
