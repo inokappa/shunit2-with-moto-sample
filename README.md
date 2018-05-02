@@ -2,9 +2,6 @@
 
 [![Build Status](https://travis-ci.org/inokappa/shunit2-with-moto-sample.svg?branch=master)](https://travis-ci.org/inokappa/shunit2-with-moto-sample)
 
-<!--ts-->
-<!--te-->
-
 ## これは
 
 shunit2 と moto[server] を組み合わせて awscli をラップしたシェルスクリプトのユニットテストを行うサンプル的なものです.
